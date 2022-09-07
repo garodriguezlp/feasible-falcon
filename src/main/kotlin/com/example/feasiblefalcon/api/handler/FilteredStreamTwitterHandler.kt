@@ -1,4 +1,4 @@
-package com.example.feasiblefalcon.handler
+package com.example.feasiblefalcon.api.handler
 
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest

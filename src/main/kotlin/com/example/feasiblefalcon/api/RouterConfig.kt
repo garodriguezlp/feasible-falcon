@@ -1,6 +1,6 @@
-package com.example.feasiblefalcon
+package com.example.feasiblefalcon.api
 
-import com.example.feasiblefalcon.handler.FilteredStreamTwitterHandler
+import com.example.feasiblefalcon.api.handler.FilteredStreamTwitterHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType.APPLICATION_JSON
