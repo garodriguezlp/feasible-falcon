@@ -1,19 +1,27 @@
-package com.example.feasiblefalcon.handler
+package me.garodriguezlp.feasiblefalcon.adapter.inbound.web
 
-import com.example.feasiblefalcon.api.handler.FilteredStreamTwitterHandler
+import me.garodriguezlp.feasiblefalcon.port.inbound.TwitterPort
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito.mock
+import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.server.EntityResponse
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
+@ExtendWith(MockitoExtension::class)
 internal class FilteredStreamTwitterHandlerTest {
 
-    private val handler = FilteredStreamTwitterHandler()
+    @Mock
+    lateinit var twitterPort: TwitterPort;
+
+    @InjectMocks
+    lateinit var handler: FilteredStreamTwitterHandler;
 
     @Test
     fun getRulesShouldReturn200StatusCodeAndHelloWorldBody() {

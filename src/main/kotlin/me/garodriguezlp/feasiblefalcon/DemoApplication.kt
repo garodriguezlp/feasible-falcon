@@ -1,4 +1,4 @@
-package com.example.feasiblefalcon
+package me.garodriguezlp.feasiblefalcon
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,15 +1,14 @@
-package com.example.feasiblefalcon.api
+package me.garodriguezlp.feasiblefalcon.adapter.inbound.web
 
-import com.example.feasiblefalcon.api.handler.FilteredStreamTwitterHandler
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@WebFluxTest
-@ContextConfiguration(classes = [RouterConfig::class, FilteredStreamTwitterHandler::class])
-class RouterConfigTest {
+@SpringBootTest
+@AutoConfigureWebTestClient
+internal class RulesApiIntegrationTest {
 
     @Autowired
     lateinit var webTestClient: WebTestClient
