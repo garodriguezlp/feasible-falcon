@@ -1,6 +1,6 @@
 package me.garodriguezlp.feasiblefalcon.adapter.inbound.web
 
-import me.garodriguezlp.feasiblefalcon.port.inbound.TwitterPort
+import me.garodriguezlp.feasiblefalcon.port.inbound.TwitterRulesService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,7 +18,7 @@ import reactor.test.StepVerifier
 internal class FilteredStreamTwitterHandlerTest {
 
     @Mock
-    lateinit var twitterPort: TwitterPort;
+    lateinit var twitterRulesService: TwitterRulesService;
 
     @InjectMocks
     lateinit var handler: FilteredStreamTwitterHandler;

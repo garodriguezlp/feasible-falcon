@@ -1,6 +1,6 @@
 package me.garodriguezlp.feasiblefalcon.port.inbound
 
-interface TwitterPort {
+interface TwitterRulesService {
 
     fun getTweets(): List<String>
 
