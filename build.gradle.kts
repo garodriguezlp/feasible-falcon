@@ -15,6 +15,8 @@ repositories {
     mavenCentral()
 }
 
+extra["springCloudVersion"] = "2021.0.4"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -24,8 +26,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
-    testImplementation("com.squareup.okhttp3:okhttp:4.9.1")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
+    testImplementation("com.squareup.okhttp3:okhttp:4.10.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    }
 }
 
 tasks.withType<KotlinCompile> {

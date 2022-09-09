@@ -13,14 +13,12 @@ internal class TwitterApiImplTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var twitterApiImpl: TwitterApiImpl
 
-    private val mockServerPort = 8090
-
     @BeforeEach
     internal fun setUp() {
         mockWebServer = MockWebServer()
-        mockWebServer.start(mockServerPort)
+        mockWebServer.start(0)
         val webClient = WebClient.builder()
-            .baseUrl("http://localhost:${mockServerPort}")
+            .baseUrl("http://localhost:${mockWebServer.port}")
             .build()
         twitterApiImpl = TwitterApiImpl(webClient, "Bearer token")
     }
@@ -32,8 +30,7 @@ internal class TwitterApiImplTest {
 
     @Test
     internal fun `should hit twitter api to get all configured routes`() {
-        val body = """{ "data": [ { "id": "1567277611520237572", "tag": "salsa", "value": "salsa -has:media" } ], 
-            "meta": { "result_count": 1, "sent": "2022-09-07T20:00:52.041Z" } }""".trimMargin()
+        val body = this::class.java.getResource("/__files/twitter-search-stream-rules-response.json")!!.readText()
 
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 

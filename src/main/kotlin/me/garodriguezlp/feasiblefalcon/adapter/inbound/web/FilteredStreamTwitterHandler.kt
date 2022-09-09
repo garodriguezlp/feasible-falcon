@@ -9,9 +9,9 @@ import reactor.core.publisher.Mono
 @Component
 class FilteredStreamTwitterHandler(private val twitterRulesService: TwitterRulesService) {
 
-    fun getRules(request: ServerRequest): Mono<ServerResponse> {
+    fun getStreamFilteringRules(request: ServerRequest): Mono<ServerResponse> {
         return ServerResponse.ok()
-            .body(Mono.just("Hello world"), String::class.java)
+            .body(twitterRulesService.getStreamFilteringRules(), List::class.java)
     }
 
 }
