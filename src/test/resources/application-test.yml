@@ -1,3 +1,4 @@
 ## User defined
 twitter.api:
   url: http://localhost:${wiremock.server.port}/
+  bearer.token: bearer-token
