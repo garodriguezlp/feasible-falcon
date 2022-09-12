@@ -11,7 +11,7 @@ data class TwitterRule(
 }
 
 data class Meta(
-    val resultCount: Long, val sent: String
+    val sent: String
 )
 
 data class AddRule(

@@ -1,0 +1,21 @@
+{
+  "name": "tweets_search_stream_rules",
+  "request": {
+    "url": "/tweets/search/stream/rules",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"add\": [{\"value\": \"#politica #colombia -has:media\", \"tag\": \"politics\"}]}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "bodyFileName": "twitter-add-stream-rule-response.json"
+  }
+}

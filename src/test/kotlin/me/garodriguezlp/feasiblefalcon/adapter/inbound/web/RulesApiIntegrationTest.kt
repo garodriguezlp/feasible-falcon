@@ -17,7 +17,7 @@ internal class RulesApiIntegrationTest {
     private lateinit var testClient: WebTestClient
 
     @Test
-    internal fun `rules endpoint should retrieve all configured stream filtering rules`() {
+    fun `rules endpoint should retrieve all configured stream filtering rules`() {
         testClient.get().uri("/api/rules")
             .exchange()
             .expectStatus().isOk
@@ -25,5 +25,18 @@ internal class RulesApiIntegrationTest {
             .jsonPath("$[0].id").isEqualTo("1567277611520237572")
             .jsonPath("$[0].tag").isEqualTo("salsa")
             .jsonPath("$[0].value").isEqualTo("salsa -has:media")
+    }
+
+    @Test
+    fun `add rule endpoint should add a new rule`() {
+        testClient.post().uri("/api/rule")
+            .bodyValue("""{"tag":"politics","value":"#politica #colombia -has:media"}""")
+            .header("Content-Type", "application/json")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.id").isNotEmpty
+            .jsonPath("$.tag").isEqualTo("politics")
+            .jsonPath("$.value").isEqualTo("#politica #colombia -has:media")
     }
 }

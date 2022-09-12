@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono
 interface TwitterRulesService {
 
     fun getStreamFilteringRules(): Mono<List<Rule>>
+
+    fun addStreamFilteringRule(rule: Rule): Mono<Rule>
 }

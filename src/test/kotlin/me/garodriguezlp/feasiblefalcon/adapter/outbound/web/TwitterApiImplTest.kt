@@ -60,7 +60,7 @@ internal class TwitterApiImplTest {
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
         StepVerifier.create(twitterApiImpl.addRule(Rule("politics", "#politics #colombia -has:media")))
-            .expectNextMatches { it.id == "1568377031330496514" && it.tag == "politics" && it.value == "#politics #colombia -has:media" }
+            .expectNextMatches { it.id == "1568377031330496514" && it.tag == "politics" && it.value == "#politica #colombia -has:media" }
             .verifyComplete();
 
         val takeRequest = mockWebServer.takeRequest()

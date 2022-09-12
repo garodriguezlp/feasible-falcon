@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.server.EntityResponse
 import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
@@ -26,7 +27,7 @@ internal class FilteredStreamTwitterHandlerTest {
     lateinit var handler: FilteredStreamTwitterHandler;
 
     @Test
-    fun getRulesShouldReturn200StatusCodeAndHelloWorldBody() {
+    fun `get rules should return 200 and the list of all configured rules`() {
         val serverRequest = mock(ServerRequest::class.java)
         val rule = Rule("id", "tag", "value")
 
@@ -35,11 +36,31 @@ internal class FilteredStreamTwitterHandlerTest {
         StepVerifier.create(handler.getStreamFilteringRules(serverRequest))
             .assertNext { response ->
                 assertThat(response.statusCode()).isEqualTo(HttpStatus.OK)
-                StepVerifier.create((response as EntityResponse<*>).entity() as Mono<*>)
+                StepVerifier.create(extractResponseEntity(response))
                     .assertNext { assertThat(it as List<*>).containsOnly(rule) }
                     .verifyComplete()
             }
             .verifyComplete()
     }
 
+    @Test
+    fun `add rule should return 200 and the added rule`() {
+        val serverRequest = mock(ServerRequest::class.java)
+        val rule = Rule("id", "tag", "value")
+
+        `when`(serverRequest.bodyToMono(Rule::class.java)).thenReturn(Mono.just(rule))
+        `when`(twitterRulesService.addStreamFilteringRule(rule)).thenReturn(Mono.just(rule))
+
+        StepVerifier.create(handler.addStreamFilteringRule(serverRequest))
+            .assertNext { response ->
+                assertThat(response.statusCode()).isEqualTo(HttpStatus.OK)
+                StepVerifier.create(extractResponseEntity(response))
+                    .assertNext { assertThat(it as Rule).isEqualTo(rule) }
+                    .verifyComplete()
+            }
+            .verifyComplete()
+    }
+
+    private fun extractResponseEntity(response: ServerResponse?) =
+        (response as EntityResponse<*>).entity() as Mono<*>
 }

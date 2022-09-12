@@ -11,7 +11,10 @@ class RouterConfig {
     @Bean
     fun router(handler: FilteredStreamTwitterHandler) = router {
         accept(APPLICATION_JSON).nest {
-            "/api".nest { GET("/rules", handler::getStreamFilteringRules) }
+            "/api".nest {
+                GET("/rules", handler::getStreamFilteringRules)
+                POST("/rule", handler::addStreamFilteringRule)
+            }
         }
     }
 }
