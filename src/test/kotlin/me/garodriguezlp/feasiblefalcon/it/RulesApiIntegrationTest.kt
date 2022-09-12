@@ -1,4 +1,4 @@
-package me.garodriguezlp.feasiblefalcon.adapter.inbound.web
+package me.garodriguezlp.feasiblefalcon.it
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
