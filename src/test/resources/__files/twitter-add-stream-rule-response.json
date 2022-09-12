@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "id": "1568377031330496514",
+      "tag": "politics",
+      "value": "#politics #colombia -has:media"
+    }
+  ],
+  "meta": {
+    "sent": "2022-09-09T23:13:19.398Z",
+    "summary": {
+      "created": 1,
+      "invalid": 0,
+      "not_created": 0,
+      "valid": 1
+    }
+  }
+}

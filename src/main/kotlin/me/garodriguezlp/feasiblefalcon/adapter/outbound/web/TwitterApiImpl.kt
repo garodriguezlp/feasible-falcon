@@ -9,9 +9,12 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
 @Service
-class TwitterApiImpl(private var webClient: WebClient,
-                     @Value("\${twitter.api.bearer.token}")
-                     private var bearerToken : String) : TwitterApi {
+class TwitterApiImpl(
+    private var webClient: WebClient,
+
+    @Value("\${twitter.api.bearer.token}")
+    private var bearerToken: String
+) : TwitterApi {
 
     override fun getRules(): Mono<List<Rule>> {
         return webClient.get()
@@ -19,10 +22,28 @@ class TwitterApiImpl(private var webClient: WebClient,
             .headers { it.setBearerAuth(bearerToken) }
             .retrieve()
             .bodyToMono<RulesResponse>()
+            .map { mapToRuleList(it) }
+    }
+
+    override fun addRule(rule: Rule): Mono<Rule> {
+        return webClient.post()
+            .uri("/tweets/search/stream/rules")
+            .headers { it.setBearerAuth(bearerToken) }
+            .bodyValue(mapToAddRequest(rule))
+            .retrieve()
+            .bodyToMono<RulesResponse>()
             .map { mapToRule(it) }
     }
 
-    private fun mapToRule(response: RulesResponse): List<Rule> {
+    private fun mapToAddRequest(rule: Rule): AddRule {
+        return AddRule(listOf(TwitterRule(rule.tag, rule.value)))
+    }
+
+    private fun mapToRuleList(response: RulesResponse): List<Rule> {
         return response.data.map { Rule(it.id, it.tag, it.value) }
+    }
+
+    private fun mapToRule(response: RulesResponse): Rule = response.data[0].let {
+        Rule(it.id, it.tag, it.value)
     }
 }
