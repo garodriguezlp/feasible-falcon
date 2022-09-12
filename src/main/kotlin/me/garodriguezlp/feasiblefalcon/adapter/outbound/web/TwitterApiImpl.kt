@@ -16,34 +16,44 @@ class TwitterApiImpl(
     private var bearerToken: String
 ) : TwitterApi {
 
-    override fun getRules(): Mono<List<Rule>> {
-        return webClient.get()
-            .uri("/tweets/search/stream/rules")
+    private val tweetsSearchStreamRulesApiPath = "/tweets/search/stream/rules"
+
+    override fun getRules(): Mono<List<Rule>> =
+        webClient.get()
+            .uri(tweetsSearchStreamRulesApiPath)
             .headers { it.setBearerAuth(bearerToken) }
             .retrieve()
             .bodyToMono<RulesResponse>()
             .map { mapToRuleList(it) }
-    }
 
-    override fun addRule(rule: Rule): Mono<Rule> {
-        return webClient.post()
-            .uri("/tweets/search/stream/rules")
+    override fun addRule(rule: Rule): Mono<Rule> =
+        webClient.post()
+            .uri(tweetsSearchStreamRulesApiPath)
             .headers { it.setBearerAuth(bearerToken) }
             .bodyValue(mapToAddRequest(rule))
             .retrieve()
             .bodyToMono<RulesResponse>()
             .map { mapToRule(it) }
-    }
 
-    private fun mapToAddRequest(rule: Rule): AddRule {
-        return AddRule(listOf(TwitterRule(rule.tag, rule.value)))
-    }
+    override fun deleteRules(rules: List<Rule>): Mono<Int> =
+        webClient.post()
+            .uri(tweetsSearchStreamRulesApiPath)
+            .headers { it.setBearerAuth(bearerToken) }
+            .bodyValue(mapToDeleteRequest(rules))
+            .retrieve()
+            .bodyToMono<RulesResponse>()
+            .map { it.meta.summary.deleted }
 
-    private fun mapToRuleList(response: RulesResponse): List<Rule> {
-        return response.data.map { Rule(it.id, it.tag, it.value) }
-    }
+    private fun mapToRuleList(response: RulesResponse) =
+        response.data.map { Rule(it.id, it.tag, it.value) }
 
-    private fun mapToRule(response: RulesResponse): Rule = response.data[0].let {
-        Rule(it.id, it.tag, it.value)
+    private fun mapToAddRequest(rule: Rule) =
+        AddRuleRequest(listOf(TwitterRule(rule.tag, rule.value)))
+
+    private fun mapToRule(response: RulesResponse) =
+        response.data[0].let { Rule(it.id, it.tag, it.value) }
+
+    private fun mapToDeleteRequest(rules: List<Rule>): DeleteRulesRequest {
+        return DeleteRulesRequest(DeleteRule(rules.map { it.id }))
     }
 }

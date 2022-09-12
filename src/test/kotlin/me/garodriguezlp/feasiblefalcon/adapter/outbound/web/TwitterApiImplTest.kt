@@ -22,7 +22,7 @@ internal class TwitterApiImplTest {
     private val jsonTester = BasicJsonTester(this::class.java)
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         mockWebServer = MockWebServer()
         mockWebServer.start(0)
         val webClient = WebClient.builder()
@@ -32,12 +32,12 @@ internal class TwitterApiImplTest {
     }
 
     @AfterEach
-    internal fun tearDown() {
+    fun tearDown() {
         mockWebServer.shutdown()
     }
 
     @Test
-    internal fun `should hit twitter api to get all configured routes`() {
+    fun `should hit twitter api to get all configured routes`() {
         val body = this::class.java.getResource("/__files/twitter-search-stream-rules-response.json")!!.readText()
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
@@ -45,17 +45,13 @@ internal class TwitterApiImplTest {
             .expectNextMatches { it[0].id == "1567277611520237572" && it[0].tag == "salsa" && it[0].value == "salsa -has:media" }
             .verifyComplete()
 
-        val takeRequest = mockWebServer.takeRequest()
-        assertThat(takeRequest)
-            .extracting("path", "method")
-            .containsExactly("/tweets/search/stream/rules", "GET")
-
-        assertThat(takeRequest.getHeader("Authorization"))
-            .isEqualTo("Bearer $bearerToken")
+        assertThat(mockWebServer.takeRequest())
+            .extracting(RecordedRequest::path, RecordedRequest::method, { it.getHeader("Authorization") })
+            .containsExactly("/tweets/search/stream/rules", "GET", "Bearer $bearerToken")
     }
 
     @Test
-    internal fun `should hit twitter api to add a new rule`() {
+    fun `should hit twitter api to add a new rule`() {
         val body = this::class.java.getResource("/__files/twitter-add-stream-rule-response.json")!!.readText()
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
@@ -69,5 +65,29 @@ internal class TwitterApiImplTest {
             .containsExactly("/tweets/search/stream/rules", "POST", "Bearer $bearerToken")
         assertThat(jsonTester.from(takeRequest.body.readUtf8()))
             .isEqualToJson("""{"add":[{"value":"#politics #colombia -has:media","tag":"politics"}]}""")
+    }
+
+    @Test
+    fun `should hit twitter api to delete all given rules`() {
+        val body = this::class.java.getResource("/__files/twitter-delete-stream-rules-response.json")!!.readText()
+        mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
+
+        val deletedRules = twitterApiImpl.deleteRules(
+            listOf(
+                Rule("1567277611520237572", "test1", "#test1"),
+                Rule("1568377031330496514", "test2", "#test2")
+            )
+        )
+
+        StepVerifier.create(deletedRules)
+            .expectNext(2)
+            .verifyComplete()
+
+        val takeRequest = mockWebServer.takeRequest()
+        assertThat(takeRequest)
+            .extracting(RecordedRequest::path, RecordedRequest::method, { it.getHeader("Authorization") })
+            .containsExactly("/tweets/search/stream/rules", "POST", "Bearer $bearerToken")
+        assertThat(jsonTester.from(takeRequest.body.readUtf8()))
+            .isEqualToJson("""{"delete":{"ids":["1567277611520237572","1568377031330496514"]}}""")
     }
 }

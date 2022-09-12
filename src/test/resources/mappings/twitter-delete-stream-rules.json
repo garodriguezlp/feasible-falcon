@@ -1,20 +1,20 @@
 {
   "request": {
-    "url": "/tweets/search/stream/rules",
+    "url": "/2/tweets/search/stream/rules",
     "method": "POST",
     "bodyPatterns": [
       {
-        "equalToJson": "{\"add\": [{\"value\": \"#politica #colombia -has:media\", \"tag\": \"politics\"}]}",
+        "equalToJson": "{\"delete\": {\"ids\": [\"1569427293486911489\", \"1569427293486911567\"]}}",
         "ignoreArrayOrder": true,
         "ignoreExtraElements": true
       }
     ]
   },
   "response": {
-    "status": 201,
+    "status": 200,
     "headers": {
       "content-type": "application/json; charset=utf-8"
     },
-    "bodyFileName": "twitter-add-stream-rule-response.json"
+    "bodyFileName": "twitter-delete-stream-rules-response.json"
   }
 }

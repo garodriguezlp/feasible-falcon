@@ -8,4 +8,6 @@ interface TwitterApi {
     fun getRules(): Mono<List<Rule>>
 
     fun addRule(rule: Rule): Mono<Rule>
+
+    fun deleteRules(rules: List<Rule>): Mono<Int>
 }
