@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     id("jacoco")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.4.0.2513"
 }
 
 group = "me.garodriguezlp"
@@ -39,20 +39,29 @@ dependencyManagement {
     }
 }
 
-tasks.withType<KotlinCompile> {
+tasks.compileKotlin {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "11"
     }
 }
 
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<JacocoReport> {
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
     reports {
         xml.required.set(true)
         html.required.set(true)
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "garodriguezlp_feasible-falcon")
+        property("sonar.organization", "garodriguezlp")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
