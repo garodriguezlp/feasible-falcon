@@ -30,13 +30,24 @@ internal class RulesApiIntegrationTest {
     @Test
     fun `add rule endpoint should add a new rule`() {
         testClient.post().uri("/api/rule")
-            .bodyValue("""{"tag":"politics","value":"#politica #colombia -has:media"}""")
+            .bodyValue("""{"tag":"politics","value":"#politics #colombia -has:media"}""")
             .header("Content-Type", "application/json")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.id").isNotEmpty
             .jsonPath("$.tag").isEqualTo("politics")
-            .jsonPath("$.value").isEqualTo("#politica #colombia -has:media")
+            .jsonPath("$.value").isEqualTo("#politics #colombia -has:media")
+    }
+
+    @Test
+    fun `delete rules endpoint should delete all existing rules`() {
+        testClient.delete().uri("/api/rules")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].id").isEqualTo("1567277611520237572")
+            .jsonPath("$[0].tag").isEqualTo("salsa")
+            .jsonPath("$[0].value").isEqualTo("salsa -has:media")
     }
 }

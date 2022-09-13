@@ -16,6 +16,22 @@ Project to play around and practice my skills with Kotlin, Spring WebFlux, AWS K
 
 This project uses `Gradle` as build tool and `Java 11` as runtime environment.
 
-```bash
-  gradlew bootRun
+### Build
+
+```ps1
+./gradlew build
 ```
+
+### Run
+
+> Don't forget to check the [`application.yml`](/src/main/resources/application.yml) file to configure the application
+> prior to run it.
+
+```ps1
+./gradlew bootRun
+```
+
+## API Documentation
+
+Once the app is running, you can access the API documentation
+at [`http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html)

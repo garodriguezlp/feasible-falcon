@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.server.EntityResponse
 import org.springframework.web.reactive.function.server.ServerRequest
-import org.springframework.web.reactive.function.server.ServerResponse
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
@@ -31,13 +31,13 @@ internal class FilteredStreamTwitterHandlerTest {
         val serverRequest = mock(ServerRequest::class.java)
         val rule = Rule("id", "tag", "value")
 
-        `when`(twitterRulesService.getStreamFilteringRules()).thenReturn(Mono.just(listOf(rule)))
+        `when`(twitterRulesService.getStreamFilteringRules()).thenReturn(Flux.just(rule))
 
         StepVerifier.create(handler.getStreamFilteringRules(serverRequest))
             .assertNext { response ->
                 assertThat(response.statusCode()).isEqualTo(HttpStatus.OK)
-                StepVerifier.create(extractResponseEntity(response))
-                    .assertNext { assertThat(it as List<*>).containsOnly(rule) }
+                StepVerifier.create((response as EntityResponse<*>).entity() as Flux<*>)
+                    .expectNext(rule)
                     .verifyComplete()
             }
             .verifyComplete()
@@ -54,13 +54,27 @@ internal class FilteredStreamTwitterHandlerTest {
         StepVerifier.create(handler.addStreamFilteringRule(serverRequest))
             .assertNext { response ->
                 assertThat(response.statusCode()).isEqualTo(HttpStatus.OK)
-                StepVerifier.create(extractResponseEntity(response))
-                    .assertNext { assertThat(it as Rule).isEqualTo(rule) }
+                StepVerifier.create((response as EntityResponse<*>).entity() as Mono<*>)
+                    .expectNext(rule)
                     .verifyComplete()
             }
             .verifyComplete()
     }
 
-    private fun extractResponseEntity(response: ServerResponse?) =
-        (response as EntityResponse<*>).entity() as Mono<*>
+    @Test
+    fun `delete rules should return 200 and the deleted rules`() {
+        val serverRequest = mock(ServerRequest::class.java)
+        val rule = Rule("id", "tag", "value")
+
+        `when`(twitterRulesService.deleteAllStreamFilteringRules()).thenReturn(Flux.just(rule))
+
+        StepVerifier.create(handler.deleteStreamFilteringRules(serverRequest))
+            .assertNext { response ->
+                assertThat(response.statusCode()).isEqualTo(HttpStatus.OK)
+                StepVerifier.create((response as EntityResponse<*>).entity() as Flux<*>)
+                    .expectNext(rule)
+                    .verifyComplete()
+            }
+            .verifyComplete()
+    }
 }

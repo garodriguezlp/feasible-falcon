@@ -4,7 +4,7 @@
     "method": "POST",
     "bodyPatterns": [
       {
-        "equalToJson": "{\"delete\": {\"ids\": [\"1569427293486911489\", \"1569427293486911567\"]}}",
+        "equalToJson": "{\"delete\": {\"ids\": [\"1567277611520237572\"]}}",
         "ignoreArrayOrder": true,
         "ignoreExtraElements": true
       }

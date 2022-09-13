@@ -42,7 +42,7 @@ internal class TwitterApiImplTest {
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
         StepVerifier.create(twitterApiImpl.getRules())
-            .expectNextMatches { it[0].id == "1567277611520237572" && it[0].tag == "salsa" && it[0].value == "salsa -has:media" }
+            .expectNext(Rule("1567277611520237572", "salsa", "salsa -has:media"))
             .verifyComplete()
 
         assertThat(mockWebServer.takeRequest())
@@ -56,7 +56,7 @@ internal class TwitterApiImplTest {
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
         StepVerifier.create(twitterApiImpl.addRule(Rule("politics", "#politics #colombia -has:media")))
-            .expectNextMatches { it.id == "1568377031330496514" && it.tag == "politics" && it.value == "#politica #colombia -has:media" }
+            .expectNext(Rule("1568377031330496514", "politics", "#politics #colombia -has:media"))
             .verifyComplete();
 
         val takeRequest = mockWebServer.takeRequest()
@@ -72,15 +72,10 @@ internal class TwitterApiImplTest {
         val body = this::class.java.getResource("/__files/twitter-delete-stream-rules-response.json")!!.readText()
         mockWebServer.enqueue(MockResponse().setBody(body).addHeader("Content-Type", "application/json"))
 
-        val deletedRules = twitterApiImpl.deleteRules(
-            listOf(
-                Rule("1567277611520237572", "test1", "#test1"),
-                Rule("1568377031330496514", "test2", "#test2")
-            )
-        )
+        val deletedRules = twitterApiImpl.deleteRules(listOf(Rule("1567277611520237572", "test1", "#test1")))
 
         StepVerifier.create(deletedRules)
-            .expectNext(2)
+            .expectNext(1)
             .verifyComplete()
 
         val takeRequest = mockWebServer.takeRequest()
@@ -88,6 +83,6 @@ internal class TwitterApiImplTest {
             .extracting(RecordedRequest::path, RecordedRequest::method, { it.getHeader("Authorization") })
             .containsExactly("/tweets/search/stream/rules", "POST", "Bearer $bearerToken")
         assertThat(jsonTester.from(takeRequest.body.readUtf8()))
-            .isEqualToJson("""{"delete":{"ids":["1567277611520237572","1568377031330496514"]}}""")
+            .isEqualToJson("""{"delete":{"ids":["1567277611520237572"]}}""")
     }
 }

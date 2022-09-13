@@ -4,7 +4,7 @@
     "method": "POST",
     "bodyPatterns": [
       {
-        "equalToJson": "{\"add\": [{\"value\": \"#politica #colombia -has:media\", \"tag\": \"politics\"}]}",
+        "equalToJson": "{\"add\": [{\"value\": \"#politics #colombia -has:media\", \"tag\": \"politics\"}]}",
         "ignoreArrayOrder": true,
         "ignoreExtraElements": true
       }
